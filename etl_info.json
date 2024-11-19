@@ -1,0 +1,69 @@
+{
+    "source": {
+        "type": {
+            "file": [
+                {
+                    "file_path":"",
+                    "file_name": "ratings_Electronics.csv",
+                    "file_type": "csv",
+                    "delimiter": ",",
+                    "columns":["UserId","ASIN","Ratings", "Timestamp"]
+                }
+            ],
+            "database": []
+        }
+    },
+    "target": {
+        "database": {
+            "postgresql": {
+                "host": "localhost",
+                "port": 5432,
+                "database": "postgres",
+                "username": "postgres",
+                "password": "Admin1234",
+                "conn_str": "\"host\":$host$,\"port\":$port$ ,\"user\":$username$, \"password\":$password$, \"database\":$database$"
+            },
+            "mysql":{
+                "host": "localhost",
+                "port": 3306,
+                "database": "student database",
+                "username": "root",
+                "password": "",
+                "conn_str": "\"host\":$host$,\"port\":$port$ ,\"user\":$username$, \"passwd\":$password$, \"database\":$database$"
+            }
+        }
+    },
+    "pipelines":[
+        {
+            "pipeline_name":"Amazon Product Review Pipeline",
+            "extract":{
+                "source_type":"file",
+                "source_id":"ratings_Electronics.csv"
+            },
+            "transform":{
+                "steps":[
+                    {
+                        "step_name": "filter_ratings",
+                        "operation": "filter",
+                        "parameters": {
+                            "column": "Ratings",
+                            "condition": "greater_or_equal",
+                            "value": 3
+                        }
+                    },
+                    {
+                        "step_name": "convert_timestamp",
+                        "operation": "convert",
+                        "parameters": {
+                            "columns": ["Timestamp"],
+                            "conversion_type": "epoch_to_date",
+                            "output_format": "YYYY-MM-DD HH:mm:ss"
+                        }
+                    }
+                ]
+            },
+            "load":{}
+        }
+    ]
+    
+}
